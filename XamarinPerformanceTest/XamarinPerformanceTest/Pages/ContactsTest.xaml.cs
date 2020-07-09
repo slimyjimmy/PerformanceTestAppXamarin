@@ -31,7 +31,11 @@ namespace XamarinPerformanceTest.Pages
         protected override async void OnAppearing()
         {
             base.OnAppearing();
-            //var status = await Permissions.CheckStatusAsync<Permissions.LocationWhenInUse>();
+            var status = await Permissions.CheckStatusAsync<Permissions.ContactsWrite>();
+            if (status != PermissionStatus.Granted)
+            {
+                await Permissions.RequestAsync<Permissions.ContactsWrite>();
+            }
         }
 
         protected void OnClickedStartBenchmark(object sender, EventArgs e)
@@ -52,7 +56,7 @@ namespace XamarinPerformanceTest.Pages
             Stopwatchy.Start();
             var result = writeContactService.WriteContact(new Contact("xamarin", "App", random.Next(1000).ToString()));
             Stopwatchy.Stop();
-            TestResults.Add(new TestResult(Stopwatchy.ElapsedMilliseconds * 1000000, "Test finished successfully"));
+            TestResults.Add(new TestResult(Stopwatchy.Elapsed.TotalMilliseconds * 1000000, "Test finished successfully"));
             if (--NumberOfIterationsLeft > 0)
             {
                 Test();
@@ -67,14 +71,6 @@ namespace XamarinPerformanceTest.Pages
                 var durationAvg = durationSum / TestResults.Count;
                 TestResults.Add(new TestResult(durationAvg, "(AVERAGE) ALL TESTS FINISHED"));
             }
-        }
-
-        private void AccelerometerChanged(object sender, AccelerometerChangedEventArgs e)
-        {
-            Accelerometer.ReadingChanged -= AccelerometerChanged;
-            Stopwatchy.Stop();
-            var data = e.Reading;
-            
         }
     }
 }

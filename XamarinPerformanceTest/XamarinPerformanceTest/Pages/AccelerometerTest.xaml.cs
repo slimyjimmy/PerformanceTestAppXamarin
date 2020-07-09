@@ -53,7 +53,7 @@ namespace XamarinPerformanceTest.Pages
             Accelerometer.ReadingChanged -= AccelerometerChanged;
             Stopwatchy.Stop();
             var data = e.Reading;
-            TestResults.Add(new TestResult(Stopwatchy.ElapsedMilliseconds* 1000000, "Test finished successfully (X:" + data.Acceleration.X + ", Y: " + data.Acceleration.Y + ", Z: " + data.Acceleration.Z));
+            TestResults.Add(new TestResult(Stopwatchy.Elapsed.TotalMilliseconds * 1000000, "Test finished successfully (X:" + data.Acceleration.X + ", Y: " + data.Acceleration.Y + ", Z: " + data.Acceleration.Z));
             if (--NumberOfIterationsLeft > 0)
             {
                 Test();

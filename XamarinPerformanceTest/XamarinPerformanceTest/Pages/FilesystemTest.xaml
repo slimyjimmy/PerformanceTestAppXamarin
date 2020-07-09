@@ -4,15 +4,19 @@
              xmlns:d="http://xamarin.com/schemas/2014/forms/design"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d"
-             x:Class="XamarinPerformanceTest.Pages.FilesystemTest">
+             x:Class="XamarinPerformanceTest.Pages.FilesystemTest"
+             Title="Filesystem Test">
     <ContentPage.Content>
         <StackLayout>
-            <Label Text="Fetch the current accelerometer values"/>
+            <Label Text="Retrieve image from filesystem storage"/>
             <Label Text="Please specify test parameters"/>
             <Editor x:Name="Editor_NumberOfIterations"
-                    Placeholder="Number of iteration"/>
+                    Placeholder="Number of iterations"/>
             <Button Text="START BENCHMARK"
                     Clicked="OnClickedStartBenchmark"/>
+            <ListView x:Name="testResultsListView"
+                          HasUnevenRows="True">
+            </ListView>
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>

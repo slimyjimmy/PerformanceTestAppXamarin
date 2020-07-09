@@ -12,15 +12,6 @@ using Android.Views;
 using Android.Widget;
 using System.Threading.Tasks;
 using Android.Provider;
-
-
-//using static Android.Content.ContentProviderOperation;
-//using static Android.Content.OperationApplicationException;
-//using static Android.Provider.ContactsContract;
-//using static Android.Provider.ContactsContract.CommonDataKinds.Phone;
-//using static Android.Provider.ContactsContract.CommonDataKinds.StructuredName;
-//using static Android.Provider.ContactsContract.Data;
-//using static Android.Provider.ContactsContract.RawContacts;
 using Xamarin.Forms;
 
 
@@ -31,63 +22,35 @@ namespace XamarinPerformanceTest.Droid.DependencyServices
     {
         public int WriteContact(Contact contact)
         {
-            var activity = Android.App.Application.Context as Activity;
-            var intent = new Intent(Intent.ActionInsert);
-            intent.SetType(ContactsContract.Contacts.ContentType);
-            intent.PutExtra(ContactsContract.Intents.Insert.Name, contact.FirstName);
-            intent.PutExtra(ContactsContract.Intents.Insert.Phone, contact.Number);
-            activity.StartActivity(intent);
+            List<ContentProviderOperation> ops = new List<ContentProviderOperation>();
+            int rawContactInsertIndex = ops.Count;
+
+            ops.Add(ContentProviderOperation
+                .NewInsert(Android.Provider.ContactsContract.RawContacts.ContentUri)
+                .WithValue(Android.Provider.ContactsContract.RawContacts.InterfaceConsts.AccountType, null)
+                .WithValue(Android.Provider.ContactsContract.RawContacts.InterfaceConsts.AccountName, null).Build());
+            ops.Add(ContentProviderOperation
+                .NewInsert(Android.Provider.ContactsContract.Data.ContentUri)
+                .WithValueBackReference(Android.Provider.ContactsContract.Data.InterfaceConsts.RawContactId, rawContactInsertIndex)
+                .WithValue(Android.Provider.ContactsContract.Data.InterfaceConsts.Mimetype, Android.Provider.ContactsContract.CommonDataKinds.StructuredName.ContentItemType)
+                .WithValue(Android.Provider.ContactsContract.CommonDataKinds.StructuredName.DisplayName, contact.FirstName) // Name of the person
+                .Build());
+            ops.Add(ContentProviderOperation
+                .NewInsert(Android.Provider.ContactsContract.Data.ContentUri)
+                .WithValueBackReference(
+                    ContactsContract.Data.InterfaceConsts.RawContactId, rawContactInsertIndex)
+                .WithValue(Android.Provider.ContactsContract.Data.InterfaceConsts.Mimetype, Android.Provider.ContactsContract.CommonDataKinds.Phone.ContentItemType)
+                .WithValue(Android.Provider.ContactsContract.CommonDataKinds.Phone.Number, contact.Number) // Number of the person
+                .WithValue(Android.Provider.ContactsContract.CommonDataKinds.Phone.InterfaceConsts.Type, "mobile").Build()); // Type of mobile number 
+            try
+            {
+                Android.App.Application.Context.ContentResolver.ApplyBatch(ContactsContract.Authority, ops);
+            }
+            catch (Exception ex)
+            {
+                //
+            }
             return 0;
-            //ContentValues contentValues = new ContentValues();
-            //Android.Net.Uri rawContactUri = GetContentResolver().Insert(ContactsContract.RawContacts.ContentUri, contentValues);
-            //long rawContactId = ContentUris.ParseId(rawContactUri);
-
-            //ContentValues[] contactDetails = new ContentValues[2];
-            //contentValues = new ContentValues();
-            //contentValues.Put(ContactsContract.Data.RAW_CONTACT_ID, rawContactId);
-            //contentValues.Put(ContactsContract.Data.MIMETYPE, ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE);
-            //contentValues.Put(ContactsContract.CommonDataKinds.StructuredName.GivenName, "mobile" + ((int)(Math.random() * 1000)));
-            //contactDetails[0] = contentValues;
-
-            //ContentValues contentValuesPhone = new ContentValues();
-            //contentValuesPhone.Put(ContactsContract.Data.RAW_CONTACT_ID, rawContactId);
-            //contentValuesPhone.Put(ContactsContract.Data.MIMETYPE, ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE);
-            //contentValuesPhone.Put(ContactsContract.CommonDataKinds.Phone.TYPE, ContactsContract.CommonDataKinds.Phone.TYPE_HOME);
-            //contentValuesPhone.Put(ContactsContract.CommonDataKinds.Phone.Number, "123456789");
-            //contactDetails[1] = contentValuesPhone;
-
-            //getContentResolver().BulkInsert(ContactsContract.Data.CONTENT_URI, contactDetails);
         }
-
-
-        //private void WriteContact(String displayName, String number)
-        //{
-        //    //ArrayList contentProviderOperations = new ArrayList();
-        //    var contentProviderOperations = new List<ContentProviderOperation>();
-        //    //insert raw contact using RawContacts.CONTENT_URI
-        //    contentProviderOperations.Add(ContentProviderOperation.NewInsert(RawContacts.ContentUri)
-        //        .WithValue(RawContacts.ACCOUNT_TYPE, null).withValue(RawContacts.ACCOUNT_NAME, null).build());
-        //    //insert contact display name using Data.CONTENT_URI
-        //    contentProviderOperations.Add(ContentProviderOperation.NewInsert(ContactsContract.Data.CONTENT_URI)
-        //        .withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, 0).withValue(ContactsContract.Data.MIMETYPE, StructuredName.CONTENT_ITEM_TYPE)
-        //        .withValue(StructuredName.DISPLAY_NAME, displayName).build());
-        //    //insert mobile number using Data.CONTENT_URI
-        //    contentProviderOperations.Add(ContentProviderOperation.NewInsert(ContactsContract.Data.ContentUri)
-        //        .withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, 0).withValue(ContactsContract.Data.MIMETYPE, Phone.CONTENT_ITEM_TYPE)
-        //        .withValue(Phone.NUMBER, number).withValue(Phone.TYPE, Phone.TYPE_MOBILE).build());
-        //    try
-        //    {
-        //        getApplicationContext().getContentResolver().
-        //            applyBatch(ContactsContract.AUTHORITY, contentProviderOperations);
-        //    }
-        //    catch (RemoteException e)
-        //    {
-        //        e.printStackTrace();
-        //    }
-        //    catch (OperationApplicationException e)
-        //    {
-        //        e.printStackTrace();
-        //    }
-        //}
     }
 }

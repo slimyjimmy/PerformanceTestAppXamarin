@@ -5,10 +5,10 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d"
              x:Class="XamarinPerformanceTest.Pages.ContactsTest"
-             Title="Accelerometer Test">
+             Title="Contacts Test">
     <ContentPage.Content>
         <StackLayout>
-            <Label Text="Fetch the current accelerometer values"/>
+            <Label Text="Write contacts to device storage"/>
             <Label Text="Please specify test parameters"/>
             <Editor x:Name="Editor_NumberOfIterations"
                     Placeholder="Number of iterations"/>
