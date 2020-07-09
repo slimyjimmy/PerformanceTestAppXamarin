@@ -16,7 +16,7 @@ namespace XamarinPerformanceTest.Pages
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class AccelerometerTest : ContentPage
     {
-        private Stopwatch Stopwatch { get; set; }
+        private Stopwatch Stopwatchy { get; set; }
         private ObservableCollection<TestResult> TestResults { get; set; }
         private int NumberOfIterations { get; set; }
         private int NumberOfIterationsLeft { get; set; }
@@ -29,7 +29,7 @@ namespace XamarinPerformanceTest.Pages
 
         protected void OnClickedStartBenchmark(object sender, EventArgs e)
         {
-            Stopwatch = new Stopwatch();
+            Stopwatchy = new Stopwatch();
             NumberOfIterations = int.Parse(Editor_NumberOfIterations.Text);
             NumberOfIterationsLeft = NumberOfIterations;
             TestResults.Clear();
@@ -38,7 +38,8 @@ namespace XamarinPerformanceTest.Pages
 
         private void Test()
         {
-            Stopwatch.StartNew();
+            Stopwatchy = new Stopwatch();
+            Stopwatchy.Start();
             if (Accelerometer.IsMonitoring)
             {
                 Accelerometer.Stop();
@@ -50,15 +51,21 @@ namespace XamarinPerformanceTest.Pages
         private void AccelerometerChanged(object sender, AccelerometerChangedEventArgs e)
         {
             Accelerometer.ReadingChanged -= AccelerometerChanged;
-            Stopwatch.Stop();
+            Stopwatchy.Stop();
             var data = e.Reading;
-            TestResults.Add(new TestResult(Stopwatch.ElapsedMilliseconds* 1000000, "Test finished successfully (X:" + data.Acceleration.X + ", Y: " + data.Acceleration.Y + ", Z: " + data.Acceleration.Z));
+            TestResults.Add(new TestResult(Stopwatchy.ElapsedMilliseconds* 1000000, "Test finished successfully (X:" + data.Acceleration.X + ", Y: " + data.Acceleration.Y + ", Z: " + data.Acceleration.Z));
             if (--NumberOfIterationsLeft > 0)
             {
                 Test();
             } else
             {
-
+                var durationSum = 0.0;
+                foreach (var testResult in TestResults)
+                {
+                    durationSum += testResult.Duration;
+                }
+                var durationAvg = durationSum / TestResults.Count;
+                TestResults.Add(new TestResult(durationAvg, "(AVERAGE) ALL TESTS FINISHED"));
             }
         }
     }

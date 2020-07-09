@@ -17,7 +17,7 @@ namespace XamarinPerformanceTest
 
         public override string ToString()
         {
-            return Duration + "ns" + Message;
+            return Duration + "ns: " + Message;
         }
     }
 }
