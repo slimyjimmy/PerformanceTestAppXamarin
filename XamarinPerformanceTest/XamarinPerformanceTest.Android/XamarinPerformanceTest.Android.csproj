@@ -16,7 +16,6 @@
     <AndroidManifest>Properties\AndroidManifest.xml</AndroidManifest>
     <MonoAndroidResourcePrefix>Resources</MonoAndroidResourcePrefix>
     <MonoAndroidAssetsPrefix>Assets</MonoAndroidAssetsPrefix>
-    <AndroidUseLatestPlatformSdk>false</AndroidUseLatestPlatformSdk>
     <TargetFrameworkVersion>v9.0</TargetFrameworkVersion>
     <AndroidEnableSGenConcurrent>true</AndroidEnableSGenConcurrent>
     <AndroidUseAapt2>true</AndroidUseAapt2>
@@ -91,7 +90,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\XamarinPerformanceTest\XamarinPerformanceTest.csproj">
-      <Project>{BAF651F9-9A9D-4406-8EDE-AD769644EF18}</Project>
+      <Project>{C8D0C1F3-1B0D-44C1-B5CF-DD09C6AB385F}</Project>
       <Name>XamarinPerformanceTest</Name>
     </ProjectReference>
   </ItemGroup>

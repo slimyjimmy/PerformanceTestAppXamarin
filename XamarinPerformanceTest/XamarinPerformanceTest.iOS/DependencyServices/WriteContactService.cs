@@ -16,15 +16,23 @@ namespace XamarinPerformanceTest.iOS.DependencyServices
     {
         public int WriteContact(Contact contact)
         {
-            var store = new CNContactStore();
             var contactToAdd = new CNMutableContact();
-            var cellPhone = new CNLabeledValue<CNPhoneNumber>(CNLabelPhoneNumberKey.Mobile, new CNPhoneNumber(contact.Number));
-            var phoneNumber = new[] { cellPhone };
-            contactToAdd.PhoneNumbers = phoneNumber;
             contactToAdd.GivenName = contact.FirstName;
+            var phoneNumber = new CNLabeledValue<CNPhoneNumber>(label: CNLabelKey.Home, value: new CNPhoneNumber(stringValue: contact.Number));
+            contactToAdd.PhoneNumbers = new []{ phoneNumber };
+            var store = new CNContactStore();
             var saveRequest = new CNSaveRequest();
-            saveRequest.AddContact(contactToAdd, store.DefaultContainerIdentifier);
-            return 1;
+            saveRequest.AddContact(contactToAdd, null);
+            var error = new NSError();
+            try
+            {
+                store.ExecuteSaveRequest(saveRequest, out error);
+                return 0;
+            }
+            catch
+            {
+                return 1;
+            }
         }
     }
 }
